@@ -21,22 +21,10 @@ object Application extends Controller {
   }
 
   def receive = Action { implicit request =>
-    request.body.asJson match {
-      case Some(json) =>
-        json.validate[ReceiveWord].fold (
-            success => {
-	      val sendMsg = """{ "status": success }"""
-              val json = Json.toJson(sendMsg)
-              Ok(json)
-            },
-	  errors => Ok("ERROR")
-	)
-      case None => {
-	val data = request.body
-        val sendMsg = """{ "status": """ + request.body + """ } """
-        val json = Json.toJson(sendMsg)
-        Ok(json) 
-      }
-    }
+    val data = request.body.asFormUrlEncoded
+    val sendMsg = """{ status: """ + data.get + """ } """
+    val json = Json.toJson(sendMsg)
+
+    Ok(json)
   }
 }
